@@ -1,0 +1,612 @@
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Podium.hs | Propuesta POS</title>
+
+    <meta
+      name="description"
+      content="Propuesta POS para Podium.hs: punto de venta (POS) en tablet, inventario y reportes. Nota de consumo digital opcional."
+    />
+
+    <link rel="canonical" href="https://unknownshopper.github.io/podium/propuesta.html" />
+    <meta name="theme-color" content="#ffffff" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="The Unknown Shopper" />
+    <meta property="og:title" content="Podium.hs | Propuesta POS" />
+    <meta
+      property="og:description"
+      content="POS en tablet (sin impresoras): registro de ventas, stock y reportes. Envío opcional de nota de consumo por WhatsApp/correo."
+    />
+    <meta property="og:url" content="https://unknownshopper.github.io/podium/propuesta.html" />
+    <meta property="og:image" content="https://unknownshopper.github.io/podium/logopodium.png" />
+    <meta property="og:image:alt" content="Podium Healthy Spot" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Podium.hs | Propuesta POS" />
+    <meta
+      name="twitter:description"
+      content="POS en tablet: ventas, inventario y reportes. Nota de consumo digital."
+    />
+    <meta name="twitter:image" content="https://unknownshopper.github.io/podium/logopodium.png" />
+    <style>
+      :root {
+        --paper: #ffffff;
+        --ink: #0b0b0b;
+        --muted: #404040;
+        --soft: #f3f4f6;
+        --line: rgba(0, 0, 0, 0.18);
+        --lineStrong: rgba(0, 0, 0, 0.85);
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji",
+          "Segoe UI Emoji";
+        background: linear-gradient(180deg, #f7f7f7, #ffffff);
+        color: var(--ink);
+        line-height: 1.35;
+      }
+      a { color: inherit; }
+      .container {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 26px 18px 56px;
+      }
+
+      .actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 12px;
+      }
+      .btn {
+        appearance: none;
+        border: 1px solid var(--lineStrong);
+        background: #fff;
+        color: var(--ink);
+        border-radius: 999px;
+        padding: 10px 14px;
+        font-weight: 900;
+        letter-spacing: -0.01em;
+        cursor: pointer;
+      }
+      .btn:active { transform: translateY(1px); }
+
+      .sheet {
+        background: var(--paper);
+        border-radius: 22px;
+        box-shadow: 0 18px 45px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+      }
+
+      .topDots {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 14px 18px 0;
+      }
+      .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+        background: var(--ink);
+        opacity: 0.9;
+      }
+
+      .header {
+        display: grid;
+        grid-template-columns: 120px 320px 1fr;
+        gap: 18px;
+        align-items: start;
+        padding: 14px 18px 18px;
+      }
+
+      .brandRow {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 10px;
+      }
+
+      .podiumBadge {
+        width: 96px;
+        height: 96px;
+        border-radius: 999px;
+        border: 3px solid var(--ink);
+        background: #fff;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+      }
+      .podiumLogo {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .cover {
+        position: relative;
+        min-height: 280px;
+        border-left: 6px solid var(--ink);
+        padding-left: 14px;
+      }
+
+      .coverBox {
+        background: var(--ink);
+        color: #fff;
+        border-radius: 0;
+        padding: 22px 18px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+      }
+
+      .coverTitle {
+        margin: 0;
+        font-size: 52px;
+        line-height: 0.95;
+        letter-spacing: -0.06em;
+        font-weight: 800;
+      }
+
+      .coverTitleGrid {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 18px;
+        align-items: center;
+      }
+      .coverLeft {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .coverRight {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-left: 6px;
+        border-left: 2px solid rgba(255, 255, 255, 0.25);
+      }
+      .coverPos {
+        margin: 0;
+        font-size: 52px;
+        line-height: 1;
+        letter-spacing: -0.06em;
+        font-weight: 900;
+      }
+
+      .headerInfo {
+        position: relative;
+        min-height: 160px;
+      }
+
+      .headerMeta {
+        padding: 0 18px 18px;
+      }
+      .headerMeta .subtitle {
+        margin-top: 0;
+        max-width: 760px;
+      }
+      .headerMeta .pillrow {
+        margin-top: 10px;
+      }
+
+      .tusHeader {
+        width: 300px;
+        height: 300px;
+        object-fit: contain;
+        display: block;
+        margin: 2px 0 10px;
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+
+      .title {
+        margin: 0;
+        font-size: 26px;
+        letter-spacing: -0.03em;
+        font-weight: 800;
+      }
+      .subtitle {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .pillrow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .pill {
+        border: 1px solid var(--lineStrong);
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        color: var(--ink);
+        background: #fff;
+        font-weight: 700;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        padding: 0 18px 18px;
+      }
+      .card {
+        padding: 14px 14px;
+        border-left: 6px solid var(--ink);
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        border-right: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+      }
+      .card h2 {
+        margin: 0 0 10px;
+        font-size: 18px;
+        letter-spacing: -0.02em;
+        font-weight: 900;
+      }
+      .card p { margin: 0 0 10px; color: var(--muted); font-size: 14px; }
+      ul {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      li { margin: 6px 0; }
+      .highlight {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: var(--soft);
+        border: 1px solid var(--lineStrong);
+        color: var(--ink);
+        font-size: 12px;
+        font-weight: 800;
+      }
+      .cta {
+        margin: 0 18px 18px;
+        padding: 14px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        border-left: 6px solid var(--ink);
+        background: #fff;
+      }
+      .cta h2 { margin: 0 0 8px; font-size: 18px; font-weight: 900; letter-spacing: -0.02em; }
+      .cta p { margin: 0; color: var(--muted); font-size: 14px; }
+
+      .pricing {
+        margin: 0 18px 18px;
+        padding: 14px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        border-left: 6px solid var(--ink);
+        background: #fff;
+      }
+      .pricing h2 {
+        margin: 0 0 10px;
+        font-size: 18px;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+      }
+      .pricingGrid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 10px;
+      }
+      .plan {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px;
+        background: var(--soft);
+      }
+      .planHeader {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+      .planHeader h3 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 900;
+        letter-spacing: -0.01em;
+      }
+      .price {
+        font-size: 16px;
+        font-weight: 900;
+        letter-spacing: -0.01em;
+      }
+      .planMeta {
+        margin: 0 0 8px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .small {
+        margin: 10px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .twoCol {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 12px;
+      }
+      .box {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px;
+        background: var(--soft);
+      }
+      .box h3 {
+        margin: 0 0 6px;
+        font-size: 13px;
+        color: var(--ink);
+        letter-spacing: -0.01em;
+        font-weight: 900;
+      }
+      .box p { margin: 0; color: var(--muted); font-size: 13px; }
+      .footer {
+        margin: 0 18px 18px;
+        color: var(--muted);
+        font-size: 12px;
+        border-top: 1px solid var(--line);
+        padding-top: 14px;
+      }
+
+      .footerInner {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        align-items: center;
+      }
+      .tusWrap {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--ink);
+      }
+      .tusLogo {
+        display: block;
+        width: 44px;
+        height: 44px;
+        object-fit: contain;
+      }
+      .tusText {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.2;
+      }
+      .tusText strong { font-size: 12px; letter-spacing: -0.01em; }
+      .tusText a { color: var(--muted); text-decoration: none; }
+      .tusText a:hover { text-decoration: underline; }
+      @media (max-width: 860px) {
+        .header { grid-template-columns: 1fr; }
+        .cover { min-height: auto; }
+        .coverBox { padding: 18px 16px; }
+        .coverTitle { font-size: 40px; }
+        .coverPos { font-size: 40px; }
+        .headerInfo { min-height: auto; }
+        .tusHeader { position: static; width: 300px; height: 300px; max-width: 100%; margin: 0 0 10px; }
+        .grid { grid-template-columns: 1fr; }
+        .pricingGrid { grid-template-columns: 1fr; }
+        .twoCol { grid-template-columns: 1fr; }
+        .footerInner { grid-template-columns: 1fr; }
+      }
+
+      @page {
+        size: A4;
+        margin: 12mm;
+      }
+      @media print {
+        body { background: #fff; }
+        .container { max-width: none; padding: 0; }
+        .sheet { box-shadow: none; border-radius: 0; border: none; }
+        .noPrint { display: none !important; }
+        .header,
+        .headerMeta,
+        .card,
+        .cta,
+        .pricing,
+        .footer,
+        .plan,
+        .box { break-inside: avoid; page-break-inside: avoid; }
+        .grid { gap: 12px; }
+        a { text-decoration: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="actions noPrint">
+        <button class="btn" type="button" id="downloadPdfBtn">Descargar PDF</button>
+      </div>
+      <div class="sheet">
+        <div class="topDots" aria-hidden="true">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+
+        <section class="header">
+          <div>
+            <div class="podiumBadge">
+              <img class="podiumLogo" src="./logopodium.png" alt="Podium Healthy Spot" />
+            </div>
+          </div>
+
+          <div class="cover">
+            <div class="coverBox">
+              <div class="coverTitleGrid">
+                <h1 class="coverTitle coverLeft">PRO
+                  <br />PUE
+                  <br />STA</h1>
+                <div class="coverRight">
+                  <div class="coverPos">POS</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="headerInfo">
+            <img class="tusHeader" src="./tuslogo.png" alt="The Unknown Shopper" />
+          </div>
+        </section>
+
+        <section class="headerMeta">
+          <p class="subtitle">
+            Podium.hs · Sistema para cafetería dentro de gym: ventas, inventario y reportes desde tablet. Sin impresoras.
+          </p>
+          <div class="pillrow">
+            <div class="pill">Equipo mínimo: 1 tablet</div>
+            <div class="pill">Sin impresoras</div>
+            <div class="pill">Stock + reportes</div>
+          </div>
+        </section>
+
+        <section class="grid">
+        <div class="card">
+          <h2>Objetivo</h2>
+          <ul>
+            <li>Registrar ventas en segundos (pantalla tipo catálogo por categorías).</li>
+            <li>Controlar stock (entradas/salidas, mínimos y alertas).</li>
+            <li>Generar reportes de ventas para decisiones de producto y horarios.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h2>Alcance inicial (MVP)</h2>
+          <ul>
+            <li>Catálogo por categorías, búsqueda rápida y combos.</li>
+            <li>Corte del día y reportes por producto/categoría/horario.</li>
+            <li>Usuarios/roles (administrador y operador).</li>
+            <li>Carga del menú base (referencia: <a href="./docs/menu26.pdf">menú</a>).</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h2>Venta (sin procesar pagos)</h2>
+          <p>
+            El POS no se integra a terminal bancaria ni procesa cobros. Podium.hs cobra por fuera con su terminal/caja.
+            Se registra la venta para inventario y reportes.
+          </p>
+          <ul>
+            <li>Campo de referencia: <span class="highlight">Efectivo</span> / <span class="highlight">Tarjeta</span> / <span class="highlight">Transferencia</span>.</li>
+            <li>Opcional: permitir marcar “forma de cobro” para desglosar reportes (sin integración).</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h2>Nota de consumo digital</h2>
+          <p>
+            Al cerrar la venta, se puede enviar una nota de consumo al cliente si lo solicita.
+          </p>
+          <ul>
+            <li>Envío opcional por <span class="highlight">correo</span> o <span class="highlight">WhatsApp</span>.</li>
+            <li>Sin impresión; se muestra también en pantalla al finalizar.</li>
+          </ul>
+        </div>
+        </section>
+
+        <section class="cta">
+        <h2>Transferencias (operación)</h2>
+        <p>
+          En caso de pago por transferencia, el cliente deberá enviar su comprobante al WhatsApp del negocio.
+          El POS registrará la venta y, si se desea, quedará marcada como “Transferencia” para control interno.
+        </p>
+        <div class="twoCol">
+          <div class="box">
+            <h3>Inventario</h3>
+            <p>Descuento automático por venta, entradas de stock, mínimos y alertas de agotado.</p>
+          </div>
+          <div class="box">
+            <h3>Reportes</h3>
+            <p>Ventas por día/semana/mes, top productos, horarios pico, y corte diario.</p>
+          </div>
+        </div>
+        </section>
+
+        <section class="pricing">
+          <h2>Inversión, tiempos y soporte</h2>
+          <p>
+            La entrega se realiza funcional para operación en tablet (ventas + inventario + reportes) con el alcance definido.
+          </p>
+
+          <div class="pricingGrid">
+            <div class="plan">
+              <div class="planHeader">
+                <h3>Paquete Básico</h3>
+                <div class="price">$12,000 MXN</div>
+              </div>
+              <p class="planMeta"><strong>Entrega:</strong> 2 semanas</p>
+              <ul>
+                <li>Ventas (catálogo por categorías + búsqueda) y combos simples.</li>
+                <li>Inventario básico (entradas/salidas y mínimos).</li>
+                <li>Reporte simple + corte diario.</li>
+                <li>Nota de consumo digital opcional (correo / WhatsApp).</li>
+              </ul>
+            </div>
+
+            <div class="plan">
+              <div class="planHeader">
+                <h3>Paquete Pro</h3>
+                <div class="price">$18,000 MXN</div>
+              </div>
+              <p class="planMeta"><strong>Entrega:</strong> 3 semanas</p>
+              <ul>
+                <li>Todo lo del Básico.</li>
+                <li>Reportes mejorados (por categoría y horarios pico).</li>
+                <li>Usuarios/roles básicos (admin/operador).</li>
+              </ul>
+            </div>
+          </div>
+
+          <p class="small">
+            <strong>Soporte / ajustes:</strong> $1,000 MXN por evento de ajustes (por llamada/solicitud). Ajustes se refieren a cambios menores
+            sobre el alcance entregado (p. ej. precios, nombres, altas/bajas de productos, reordenar categorías). Nuevas funcionalidades o cambios
+            de alcance se cotizan por separado.
+          </p>
+        </section>
+
+        <section class="footer">
+        <div class="footerInner">
+          <div>Implementación sugerida: configuración + carga de menú + capacitación + arranque con seguimiento.</div>
+          <div class="tusWrap">
+            <img class="tusLogo" src="./tuslogo.png" alt="The Unknown Shopper" />
+            <div class="tusText">
+              <strong>The Unknown Shopper</strong>
+              <a href="https://unknownshoppers.com" target="_blank" rel="noreferrer">unknownshoppers.com</a>
+            </div>
+          </div>
+        </div>
+        </section>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var btn = document.getElementById("downloadPdfBtn");
+        if (!btn) return;
+        btn.addEventListener("click", function () {
+          window.print();
+        });
+      })();
+    </script>
+  </body>
+</html>
