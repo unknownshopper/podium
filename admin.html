@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Podium.hs | Admin</title>
+    <style>
+      :root {
+        --paper: #ffffff;
+        --ink: #0b0b0b;
+        --muted: #505050;
+        --soft: #f3f4f6;
+        --line: rgba(0, 0, 0, 0.14);
+        --lineStrong: rgba(0, 0, 0, 0.85);
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+        background: linear-gradient(180deg, #f7f7f7, #ffffff);
+        color: var(--ink);
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 18px;
+      }
+      .sheet {
+        background: var(--paper);
+        border-radius: 18px;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        box-shadow: 0 18px 45px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+      }
+      .top {
+        padding: 14px;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .badge {
+        width: 44px;
+        height: 44px;
+        border-radius: 999px;
+        border: 2px solid var(--ink);
+        overflow: hidden;
+        background: #fff;
+      }
+      .badge img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .brandTitle { display: flex; flex-direction: column; line-height: 1.1; }
+      .brandTitle strong { font-size: 14px; letter-spacing: -0.01em; }
+      .brandTitle span { font-size: 12px; color: var(--muted); }
+
+      .tabs {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .tab {
+        border: 1px solid var(--lineStrong);
+        background: #fff;
+        color: var(--ink);
+        border-radius: 999px;
+        padding: 10px 12px;
+        font-weight: 900;
+        cursor: pointer;
+      }
+      .tab[aria-selected="true"] { background: var(--ink); color: #fff; }
+
+      .tabLink {
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .logout {
+        border: 1px solid var(--line);
+        background: #fff;
+        color: var(--ink);
+        border-radius: 999px;
+        padding: 10px 12px;
+        font-weight: 900;
+        cursor: pointer;
+      }
+
+      .content { padding: 14px; }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 14px;
+      }
+      .card {
+        border: 1px solid var(--line);
+        border-left: 6px solid var(--ink);
+        border-radius: 16px;
+        background: #fff;
+        padding: 12px;
+      }
+      .card h2 {
+        margin: 0 0 10px;
+        font-size: 16px;
+        letter-spacing: -0.02em;
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .input, .select {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 10px 12px;
+        font-size: 14px;
+        background: #fff;
+        outline: none;
+      }
+      .btn {
+        border: 1px solid var(--lineStrong);
+        background: var(--ink);
+        color: #fff;
+        border-radius: 14px;
+        padding: 10px 12px;
+        font-weight: 900;
+        cursor: pointer;
+      }
+      .btn.secondary { background: #fff; color: var(--ink); border-color: var(--line); }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th, td {
+        text-align: left;
+        padding: 10px 8px;
+        border-bottom: 1px solid var(--line);
+        font-size: 13px;
+        vertical-align: top;
+      }
+      th { font-size: 12px; color: var(--muted); font-weight: 900; }
+
+      .kpi {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .money { font-weight: 900; white-space: nowrap; }
+
+      .two {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .hint { font-size: 12px; color: var(--muted); line-height: 1.35; }
+
+      @media (max-width: 980px) {
+        .grid { grid-template-columns: 1fr; }
+        .two { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="sheet">
+        <header class="top">
+          <div class="brand">
+            <div class="badge"><img src="./logopodium.png" alt="Podium" /></div>
+            <div class="brandTitle">
+              <strong>Podium.hs</strong>
+              <span>Administrador</span>
+            </div>
+          </div>
+          <nav class="tabs" aria-label="Secciones">
+            <a class="tab tabLink" id="tabCaja" href="./demo.html">Caja</a>
+            <button class="tab" id="tabSales" aria-selected="true" type="button">Ventas</button>
+            
+            <button class="tab" id="tabInventory" aria-selected="false" type="button">Inventario y recetas</button>
+            <button class="logout" id="logout" type="button">Salir</button>
+          </nav>
+        </header>
+
+        <main class="content">
+          <section id="salesView">
+            <div class="grid">
+              <div class="card">
+                <h2>Ventas</h2>
+                <div class="row" style="margin-bottom: 10px;">
+                  <select class="select" id="salesRange">
+                    <option value="day">Hoy</option>
+                    <option value="week">Esta semana</option>
+                    <option value="month">Este mes</option>
+                    <option value="all">Todo</option>
+                  </select>
+                  <button class="btn secondary" id="clearSales" type="button">Limpiar demo</button>
+                  <div class="kpi" id="salesKpi">—</div>
+                </div>
+                <div style="overflow:auto;">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Fecha</th>
+                        <th>Compra</th>
+                        <th>Método</th>
+                        <th>Ticket</th>
+                        <th>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody id="salesTable"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="card">
+                <h2>Resumen</h2>
+                <div class="two">
+                  <div class="card" style="border-left-width:4px; padding:10px;">
+                    <div class="kpi">Ventas</div>
+                    <div class="money" id="sumCount">0</div>
+                  </div>
+                  <div class="card" style="border-left-width:4px; padding:10px;">
+                    <div class="kpi">Total</div>
+                    <div class="money" id="sumTotal">$0.00</div>
+                  </div>
+                </div>
+                <div class="hint" style="margin-top: 10px;">
+                  Esta vista es un boceto sin backend. Lee ventas guardadas localmente desde la tablet.
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="inventoryView" style="display:none;">
+            <div class="grid">
+              <div class="card" id="cardIngredients">
+                <h2>Ingredientes (inventario)</h2>
+                <div class="row" style="margin-bottom: 10px;">
+                  <input class="input" id="ingName" placeholder="Ingrediente (ej. Yogurt griego)" />
+                  <select class="select" id="ingUnit">
+                    <option value="g">g</option>
+                    <option value="ml">ml</option>
+                    <option value="pz">pz</option>
+                  </select>
+                  <input class="input" id="ingStock" inputmode="decimal" placeholder="Stock" style="max-width:120px;" />
+                  <button class="btn" id="addIng" type="button">Agregar</button>
+                </div>
+                <div style="overflow:auto;">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Ingrediente</th>
+                        <th>Unidad</th>
+                        <th>Stock</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody id="invTable"></tbody>
+                  </table>
+                </div>
+                <div class="hint" style="margin-top:10px;">
+                  Aquí definimos los insumos base. Las recetas consumen estos ingredientes por porción.
+                </div>
+              </div>
+
+              <div class="card" id="cardRecipes">
+                <h2>Recetas (por producto)</h2>
+                <div class="row" style="margin-bottom: 10px;">
+                  <select class="select" id="recipeProduct"></select>
+                  <select class="select" id="recipeIngredient"></select>
+                  <input class="input" id="recipeQty" inputmode="decimal" placeholder="Cantidad" style="max-width:140px;" />
+                  <button class="btn" id="addRecipeLine" type="button">Añadir</button>
+                </div>
+
+                <div style="overflow:auto;">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Producto</th>
+                        <th>Ingrediente</th>
+                        <th>Cant.</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody id="recipeTable"></tbody>
+                  </table>
+                </div>
+
+                <div class="hint" style="margin-top:10px;">
+                  Al vender, se descuenta el inventario según estas porciones. En este boceto lo dejamos listo para conectar.
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="./admin.js"></script>
+    <script>
+      const logout = document.getElementById('logout');
+      if (logout) {
+        logout.addEventListener('click', () => {
+          try { localStorage.removeItem('podium_session_v1'); } catch {}
+          window.location.href = './index.html';
+        });
+      }
+    </script>
+  </body>
+</html>
