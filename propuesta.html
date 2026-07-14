@@ -303,7 +303,7 @@
       }
       .pricingGrid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(3, 1fr);
         gap: 12px;
         margin-top: 10px;
       }
@@ -559,7 +559,9 @@
               <ul>
                 <li><strong>Tecnología propuesta:</strong> HTML + CSS + JavaScript.</li>
                 <li>Ventas (catálogo por categorías + búsqueda) y combos simples.</li>
-                <li>Inventario básico (entradas/salidas y mínimos).</li>
+                <li>
+                  Inventario básico (alta de insumos y existencias; entradas/salidas manuales; mínimos y alertas).
+                </li>
                 <li>Reporte simple + corte diario.</li>
                 <li>Nota de consumo digital opcional (correo / WhatsApp).</li>
               </ul>
@@ -574,17 +576,33 @@
               <ul>
                 <li><strong>Tecnología propuesta:</strong> Next.js + Firebase (estructura escalable en nube).</li>
                 <li>Todo lo del Básico.</li>
+                <li>Inventario por recetas/porciones: el stock se descuenta automáticamente por cada venta.</li>
                 <li>Reportes mejorados (por categoría y horarios pico).</li>
                 <li>Usuarios/roles básicos (admin/operador).</li>
+              </ul>
+            </div>
+
+            <div class="plan">
+              <div class="planHeader">
+                <h3>Implementación y sucursales</h3>
+                <div class="price">Adicional</div>
+              </div>
+              <p class="planMeta"><strong>Opcionales solicitados</strong></p>
+              <ul>
+                <li>
+                  <strong>Carga de inventario (ingredientes + recetas):</strong> $4,500 MXN. Incluye alta de insumos (unidades base) y captura
+                  de recetas por porción para descuento automático al vender.
+                </li>
+                <li>
+                  <strong>Multi-sucursal (multi-tenant):</strong> $9,500 MXN. Panel admin para crear y gestionar sucursales (separación de ventas,
+                  inventario, reportes y usuarios por sucursal).
+                </li>
               </ul>
             </div>
           </div>
 
           <p class="small">
-            <strong>Carga de inventario (ingredientes + recetas):</strong> $4,500 MXN. Incluye alta de insumos (unidades base) y captura de
-            recetas por porción para que el stock se descuente automáticamente al vender.
-            <br />
-            <strong>Soporte / ajustes:</strong> $1,000 MXN por evento de ajustes (por llamada/solicitud). Ajustes se refieren a cambios menores
+            <strong>Soporte / ajustes:</strong> $800 MXN mensuales (por llamadas/solicitudes) al sistema. Ajustes se refieren a cambios menores
             sobre el alcance entregado (p. ej. precios, nombres, altas/bajas de productos, reordenar categorías). Nuevas funcionalidades o cambios
             de alcance se cotizan por separado.
           </p>
