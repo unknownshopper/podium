@@ -135,11 +135,22 @@
             </div>
 
             <div class="hint" style="margin-top:10px;">
-              Roles demo:
-              caja@podium.com (Caja)
-              admin@podium.com (Admin)
-              inventario@podium.com (Compras)
-              supervisor@podium.com (Supervisor)
+              <strong>   Roles demo: </strong><br>
+
+
+              <ul>
+                <li>admin@podium.com (Admin)</li>
+                <li>caja1@podium.com (Caja 1)</li>
+                <li>caja2@podium.com (Caja 2)</li>
+                <li>inventario@podium.com (Compras)</li>
+                <li>supervisor@podium.com (Supervisor)</li>
+              </ul> 
+              
+
+             
+
+              <!-- <h3>>>>> Contraseñas próximamente.</h3> -->
+              
             </div>
             <div class="error" id="err" style="display:none; margin-top:10px;"></div>
           </div>
@@ -156,10 +167,10 @@
       const logout = document.getElementById('logout');
 
       function go(role) {
-        if (role === 'caja') window.location.href = './demo.html';
+        if (role === 'caja' || role === 'caja1' || role === 'caja2') window.location.href = './pos.html';
         else if (role === 'admin') window.location.href = './admin.html';
         else if (role === 'inventario') window.location.href = './admin.html';
-        else if (role === 'supervisor') window.location.href = './demo.html';
+        else if (role === 'supervisor') window.location.href = './pos.html';
         else {
           err.style.display = 'block';
           err.textContent = 'Usuario no permitido.';

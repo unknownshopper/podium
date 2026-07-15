@@ -1,12 +1,14 @@
 const STORAGE_SESSION = "podium_session_v2";
-const STORAGE_USERS = "podium_users_v1";
+const STORAGE_USERS = "podium_users_v2";
 
 function roleForEmail(email) {
   const e = String(email || "").trim().toLowerCase();
   if (e === "admin@podium.com") return "admin";
-  if (e === "caja@podium.com") return "caja";
-  if (e === "inventario@podium.com") return "inventario";
   if (e === "supervisor@podium.com") return "supervisor";
+  if (e === "caja1@podium.com") return "caja1";
+  if (e === "caja2@podium.com") return "caja2";
+  if (e === "inventario@podium.com") return "inventario";
+  
   return "unknown";
 }
 
@@ -42,13 +44,14 @@ async function ensureSeedUsers() {
   const existing = loadUsers();
   if (existing) return existing;
 
-  const defaultPassword = "podium234";
-  const hash = await sha256Hex(defaultPassword);
+  const hash123 = await sha256Hex("podium123");
+  const hash234 = await sha256Hex("podium234");
   const users = {
-    "admin@podium.com": { role: "admin", passwordHash: hash },
-    "caja@podium.com": { role: "caja", passwordHash: hash },
-    "inventario@podium.com": { role: "inventario", passwordHash: hash },
-    "supervisor@podium.com": { role: "supervisor", passwordHash: hash },
+    "admin@podium.com": { role: "admin", passwordHash: hash123 },
+    "caja1@podium.com": { role: "caja1", passwordHash: hash123 },
+    "caja2@podium.com": { role: "caja2", passwordHash: hash234 },
+    "inventario@podium.com": { role: "inventario", passwordHash: hash123 },
+    "supervisor@podium.com": { role: "supervisor", passwordHash: hash123 },
   };
   saveUsers(users);
   return users;

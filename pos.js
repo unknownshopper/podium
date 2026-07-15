@@ -1,7 +1,24 @@
 const mxn = new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN" });
 
-const STORAGE_SALES = "podium_demo_sales_v1";
-const STORAGE_PRODUCTS = "podium_demo_products_v1";
+const STORAGE_SALES = "podium_sales_v1";
+const STORAGE_PRODUCTS = "podium_products_v1";
+const LEGACY_STORAGE_SALES = "podium_demo_sales_v1";
+const LEGACY_STORAGE_PRODUCTS = "podium_demo_products_v1";
+
+function migrateStorageKey(oldKey, newKey, opts) {
+  try {
+    const hasNew = localStorage.getItem(newKey);
+    if (hasNew) return;
+    const oldVal = localStorage.getItem(oldKey);
+    if (!oldVal) return;
+    localStorage.setItem(newKey, oldVal);
+    if (opts && opts.cleanupLegacy) {
+      localStorage.removeItem(oldKey);
+    }
+  } catch {
+    // ignore
+  }
+}
 
 function getSession() {
   try {
@@ -243,6 +260,7 @@ function downloadTextFile(filename, text) {
 
 function loadSales() {
   try {
+    migrateStorageKey(LEGACY_STORAGE_SALES, STORAGE_SALES, { cleanupLegacy: true });
     const raw = localStorage.getItem(STORAGE_SALES);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
@@ -584,6 +602,7 @@ function bind() {
 }
 
 function init() {
+  migrateStorageKey(LEGACY_STORAGE_PRODUCTS, STORAGE_PRODUCTS, { cleanupLegacy: true });
   const s = getSession();
   const role = s?.role;
   if (!role || !["caja", "caja1", "caja2", "admin", "supervisor"].includes(role)) {

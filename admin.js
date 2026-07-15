@@ -1,9 +1,29 @@
 const mxn = new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN" });
 
-const STORAGE_SALES = "podium_demo_sales_v1";
-const STORAGE_INV = "podium_demo_inventory_v1";
-const STORAGE_RECIPES = "podium_demo_recipes_v1";
-const STORAGE_PRODUCTS = "podium_demo_products_v1";
+const STORAGE_SALES = "podium_sales_v1";
+const STORAGE_INV = "podium_inventory_v1";
+const STORAGE_RECIPES = "podium_recipes_v1";
+const STORAGE_PRODUCTS = "podium_products_v1";
+
+const LEGACY_STORAGE_SALES = "podium_demo_sales_v1";
+const LEGACY_STORAGE_INV = "podium_demo_inventory_v1";
+const LEGACY_STORAGE_RECIPES = "podium_demo_recipes_v1";
+const LEGACY_STORAGE_PRODUCTS = "podium_demo_products_v1";
+
+function migrateStorageKey(oldKey, newKey, opts) {
+  try {
+    const hasNew = localStorage.getItem(newKey);
+    if (hasNew) return;
+    const oldVal = localStorage.getItem(oldKey);
+    if (!oldVal) return;
+    localStorage.setItem(newKey, oldVal);
+    if (opts && opts.cleanupLegacy) {
+      localStorage.removeItem(oldKey);
+    }
+  } catch {
+    // ignore
+  }
+}
 
 function getSession() {
   try {
@@ -30,6 +50,7 @@ function saveJson(key, value) {
 }
 
 function loadProducts() {
+  migrateStorageKey(LEGACY_STORAGE_PRODUCTS, STORAGE_PRODUCTS, { cleanupLegacy: true });
   const fromStorage = loadJson(STORAGE_PRODUCTS, null);
   if (Array.isArray(fromStorage) && fromStorage.length) return fromStorage;
   return [];
@@ -128,6 +149,7 @@ function setTab(which) {
 }
 
 function getSales() {
+  migrateStorageKey(LEGACY_STORAGE_SALES, STORAGE_SALES, { cleanupLegacy: true });
   return loadJson(STORAGE_SALES, []);
 }
 
@@ -194,6 +216,7 @@ function clearDemoSales() {
 }
 
 function loadInv() {
+  migrateStorageKey(LEGACY_STORAGE_INV, STORAGE_INV, { cleanupLegacy: true });
   return loadJson(STORAGE_INV, []);
 }
 
@@ -202,6 +225,7 @@ function saveInv(inv) {
 }
 
 function loadRecipes() {
+  migrateStorageKey(LEGACY_STORAGE_RECIPES, STORAGE_RECIPES, { cleanupLegacy: true });
   return loadJson(STORAGE_RECIPES, []);
 }
 
