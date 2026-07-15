@@ -570,7 +570,7 @@ function bind() {
     els.logout.addEventListener("click", (e) => {
       e.preventDefault();
       try { localStorage.removeItem("podium_session_v1"); } catch {}
-      window.location.href = "./index.html";
+      window.location.href = "./auth.html";
     });
   }
 
@@ -588,7 +588,7 @@ function init() {
   const s = getSession();
   const role = s?.role;
   if (!role || !["caja", "admin", "supervisor"].includes(role)) {
-    window.location.href = "./index.html";
+    window.location.href = "./auth.html";
     return;
   }
   if (role === "caja" && els.adminLink) {

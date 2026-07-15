@@ -128,12 +128,20 @@
               </div>
               <button class="btn" id="login" type="button">Entrar</button>
             </div>
+
+            <div style="margin-top:10px;">
+              <div class="label">Contraseña</div>
+              <input class="input" id="password" type="password" placeholder="••••••••" autocomplete="current-password" />
+            </div>
+
             <div class="hint" style="margin-top:10px;">
               Roles demo:
               caja@podium.com (Caja)
               admin@podium.com (Admin)
               inventario@podium.com (Compras)
               supervisor@podium.com (Supervisor)
+              <br />
+              Contraseña demo: <strong>podium123</strong>
             </div>
             <div class="error" id="err" style="display:none; margin-top:10px;"></div>
           </div>
@@ -144,6 +152,7 @@
     <script src="./auth.js"></script>
     <script>
       const email = document.getElementById('email');
+      const password = document.getElementById('password');
       const btn = document.getElementById('login');
       const err = document.getElementById('err');
       const logout = document.getElementById('logout');
@@ -159,14 +168,22 @@
         }
       }
 
-      function handleLogin() {
+      async function handleLogin() {
         err.style.display = 'none';
-        const s = setSession(email.value);
+        const s = await login(email.value, password.value);
+        if (!s) {
+          err.style.display = 'block';
+          err.textContent = 'Credenciales incorrectas.';
+          return;
+        }
         go(s.role);
       }
 
       btn.addEventListener('click', handleLogin);
       email.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') handleLogin();
+      });
+      password.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') handleLogin();
       });
 

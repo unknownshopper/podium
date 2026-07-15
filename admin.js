@@ -354,7 +354,7 @@ function init() {
   const s = getSession();
   const role = s?.role;
   if (!role || !["admin", "inventario", "supervisor"].includes(role)) {
-    window.location.href = "./index.html";
+    window.location.href = "./auth.html";
     return;
   }
 

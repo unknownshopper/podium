@@ -1,4 +1,5 @@
 const STORAGE_SESSION = "podium_session_v1";
+const STORAGE_USERS = "podium_users_v1";
 
 function roleForEmail(email) {
   const e = String(email || "").trim().toLowerCase();
@@ -9,9 +10,60 @@ function roleForEmail(email) {
   return "unknown";
 }
 
-function setSession(email) {
-  const role = roleForEmail(email);
-  const session = { email: String(email || "").trim(), role, createdAt: new Date().toISOString() };
+async function sha256Hex(str) {
+  const txt = String(str ?? "");
+  if (!globalThis.crypto?.subtle) {
+    return "plain:" + txt;
+  }
+  const bytes = new TextEncoder().encode(txt);
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+function loadUsers() {
+  try {
+    const raw = localStorage.getItem(STORAGE_USERS);
+    if (!raw) return null;
+    const u = JSON.parse(raw);
+    if (!u || typeof u !== "object") return null;
+    return u;
+  } catch {
+    return null;
+  }
+}
+
+function saveUsers(users) {
+  localStorage.setItem(STORAGE_USERS, JSON.stringify(users));
+}
+
+async function ensureSeedUsers() {
+  const existing = loadUsers();
+  if (existing) return existing;
+
+  const defaultPassword = "podium123";
+  const hash = await sha256Hex(defaultPassword);
+  const users = {
+    "admin@podium.com": { role: "admin", passwordHash: hash },
+    "caja@podium.com": { role: "caja", passwordHash: hash },
+    "inventario@podium.com": { role: "inventario", passwordHash: hash },
+    "supervisor@podium.com": { role: "supervisor", passwordHash: hash },
+  };
+  saveUsers(users);
+  return users;
+}
+
+async function login(email, password) {
+  const e = String(email || "").trim().toLowerCase();
+  const users = await ensureSeedUsers();
+  const u = users?.[e];
+  if (!u) return null;
+  const inputHash = await sha256Hex(String(password || ""));
+  if (u.passwordHash !== inputHash) return null;
+
+  const role = u.role || roleForEmail(e);
+  const session = { email: e, role, createdAt: new Date().toISOString() };
   localStorage.setItem(STORAGE_SESSION, JSON.stringify(session));
   return session;
 }
@@ -36,11 +88,11 @@ function getSession() {
 function requireSession(allowedRoles) {
   const s = getSession();
   if (!s) {
-    window.location.href = "./index.html";
+    window.location.href = "./auth.html";
     return null;
   }
   if (Array.isArray(allowedRoles) && allowedRoles.length && !allowedRoles.includes(s.role)) {
-    window.location.href = "./index.html";
+    window.location.href = "./auth.html";
     return null;
   }
   return s;
