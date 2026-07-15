@@ -7,7 +7,7 @@ const STORAGE_PRODUCTS = "podium_demo_products_v1";
 
 function getSession() {
   try {
-    const raw = localStorage.getItem("podium_session_v1");
+    const raw = localStorage.getItem("podium_session_v2");
     if (!raw) return null;
     return JSON.parse(raw);
   } catch {

@@ -308,8 +308,8 @@
       const logout = document.getElementById('logout');
       if (logout) {
         logout.addEventListener('click', () => {
-          try { localStorage.removeItem('podium_session_v1'); } catch {}
-          window.location.href = './index.html';
+          try { localStorage.removeItem('podium_session_v2'); } catch {}
+          window.location.href = './auth.html';
         });
       }
     </script>

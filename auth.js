@@ -1,4 +1,4 @@
-const STORAGE_SESSION = "podium_session_v1";
+const STORAGE_SESSION = "podium_session_v2";
 const STORAGE_USERS = "podium_users_v1";
 
 function roleForEmail(email) {
@@ -42,7 +42,7 @@ async function ensureSeedUsers() {
   const existing = loadUsers();
   if (existing) return existing;
 
-  const defaultPassword = "podium123";
+  const defaultPassword = "podium234";
   const hash = await sha256Hex(defaultPassword);
   const users = {
     "admin@podium.com": { role: "admin", passwordHash: hash },

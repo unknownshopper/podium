@@ -6,7 +6,7 @@ const STORAGE_PRODUCTS = "podium_demo_products_v1";
 
 function getSession() {
   try {
-    const raw = localStorage.getItem("podium_session_v1");
+    const raw = localStorage.getItem("podium_session_v2");
     if (!raw) return null;
     return JSON.parse(raw);
   } catch {
@@ -569,7 +569,7 @@ function bind() {
   if (els.logout) {
     els.logout.addEventListener("click", (e) => {
       e.preventDefault();
-      try { localStorage.removeItem("podium_session_v1"); } catch {}
+      try { localStorage.removeItem("podium_session_v2"); } catch {}
       window.location.href = "./auth.html";
     });
   }
