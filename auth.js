@@ -78,8 +78,10 @@ async function login(email, password) {
   const users = await ensureSeedUsers();
   const u = users?.[e];
   if (!u) return null;
-  const inputHash = await sha256Hex(String(password || ""));
-  if (u.passwordHash !== inputHash) return null;
+  const pw = String(password || "");
+  const inputHash = await sha256Hex(pw);
+  const inputPlain = "plain:" + pw;
+  if (u.passwordHash !== inputHash && u.passwordHash !== inputPlain) return null;
 
   const role = normalizeRole(u.role || roleForEmail(e));
   const session = { email: e, role, createdAt: new Date().toISOString() };
