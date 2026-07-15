@@ -1,12 +1,21 @@
 const STORAGE_SESSION = "podium_session_v2";
 const STORAGE_USERS = "podium_users_v2";
 
-function roleForEmail(email) {
+function normalizeRole(role) {
+  return role;
+}
+
+function normalizeEmail(email) {
   const e = String(email || "").trim().toLowerCase();
+  return e;
+}
+
+function roleForEmail(email) {
+  const e = normalizeEmail(email);
   if (e === "admin@podium.com") return "admin";
   if (e === "supervisor@podium.com") return "supervisor";
-  if (e === "caja1@podium.com") return "caja1";
-  if (e === "caja2@podium.com") return "caja2";
+  if (e === "pos1@podium.com") return "pos1";
+  if (e === "pos2@podium.com") return "pos2";
   if (e === "inventario@podium.com") return "inventario";
   
   return "unknown";
@@ -55,8 +64,8 @@ async function ensureSeedUsers() {
   const hash234 = await sha256Hex("podium234");
   const users = {
     "admin@podium.com": { role: "admin", passwordHash: hash123 },
-    "caja1@podium.com": { role: "caja1", passwordHash: hash123 },
-    "caja2@podium.com": { role: "caja2", passwordHash: hash234 },
+    "pos1@podium.com": { role: "pos1", passwordHash: hash123 },
+    "pos2@podium.com": { role: "pos2", passwordHash: hash234 },
     "inventario@podium.com": { role: "inventario", passwordHash: hash123 },
     "supervisor@podium.com": { role: "supervisor", passwordHash: hash123 },
   };
@@ -65,14 +74,14 @@ async function ensureSeedUsers() {
 }
 
 async function login(email, password) {
-  const e = String(email || "").trim().toLowerCase();
+  const e = normalizeEmail(email);
   const users = await ensureSeedUsers();
   const u = users?.[e];
   if (!u) return null;
   const inputHash = await sha256Hex(String(password || ""));
   if (u.passwordHash !== inputHash) return null;
 
-  const role = u.role || roleForEmail(e);
+  const role = normalizeRole(u.role || roleForEmail(e));
   const session = { email: e, role, createdAt: new Date().toISOString() };
   localStorage.setItem(STORAGE_SESSION, JSON.stringify(session));
   return session;
@@ -89,6 +98,7 @@ function getSession() {
     const s = JSON.parse(raw);
     if (!s || typeof s !== "object") return null;
     if (!s.role) s.role = roleForEmail(s.email);
+    s.role = normalizeRole(s.role);
     return s;
   } catch {
     return null;

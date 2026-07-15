@@ -124,7 +124,7 @@
             <div class="row">
               <div>
                 <div class="label">Correo</div>
-                <input class="input" id="email" placeholder="caja@podium.com" autocomplete="username" />
+                <input class="input" id="email" placeholder="pos1@podium.com" autocomplete="username" />
               </div>
               <button class="btn" id="login" type="button">Entrar</button>
             </div>
@@ -140,8 +140,8 @@
 
               <ul>
                 <li>admin@podium.com (Admin)</li>
-                <li>caja1@podium.com (Caja 1)</li>
-                <li>caja2@podium.com (Caja 2)</li>
+                <li>pos1@podium.com (POS 1)</li>
+                <li>pos2@podium.com (POS 2)</li>
                 <li>inventario@podium.com (Compras)</li>
                 <li>supervisor@podium.com (Supervisor)</li>
                 
@@ -168,7 +168,7 @@
       const logout = document.getElementById('logout');
 
       function go(role) {
-        if (role === 'caja' || role === 'caja1' || role === 'caja2') window.location.href = './pos.html';
+        if (role === 'pos1' || role === 'pos2') window.location.href = './pos.html';
         else if (role === 'admin') window.location.href = './admin.html';
         else if (role === 'inventario') window.location.href = './admin.html';
         else if (role === 'supervisor') window.location.href = './pos.html';

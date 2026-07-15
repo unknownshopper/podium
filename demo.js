@@ -586,12 +586,9 @@ function bind() {
 function init() {
   const s = getSession();
   const role = s?.role;
-  if (!role || !["caja", "caja1", "caja2", "admin", "supervisor"].includes(role)) {
+  if (!role || !["pos1", "pos2", "admin", "supervisor"].includes(role)) {
     window.location.href = "./auth.html";
     return;
-  }
-  if (role === "caja" && els.adminLink) {
-    els.adminLink.style.display = "none";
   }
   bind();
   renderCategories();
