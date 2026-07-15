@@ -42,7 +42,14 @@ function saveUsers(users) {
 
 async function ensureSeedUsers() {
   const existing = loadUsers();
-  if (existing) return existing;
+  if (
+    existing &&
+    typeof existing === "object" &&
+    !Array.isArray(existing) &&
+    Object.keys(existing).length > 0
+  ) {
+    return existing;
+  }
 
   const hash123 = await sha256Hex("podium123");
   const hash234 = await sha256Hex("podium234");
